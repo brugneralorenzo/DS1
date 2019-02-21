@@ -222,8 +222,8 @@
         flush(vm.groups.viewId);
 
         //TODO CHECK THESE TWO LINES OF CODE
-        if ((listId.get(listId.size() -1)) == this.id)
-            sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
+//        if ((listId.get(listId.size() -1)) == this.id)
+//            sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
       }
 
       private void flush(int viewId){
@@ -239,24 +239,30 @@
         }
 
         Iterator<ActorRef> iterator = groups.get(groups.size() -1).group.iterator(); // send a flush message to every actor in the most recent view
-        while (iterator.hasNext()){
-          ActorRef a = iterator.next();
-          if (!a.equals(getSelf()))
-            a.tell(new FlushMsg(viewId, this.id), getSelf());
-        }
+          while (iterator.hasNext()){
+              ActorRef a = iterator.next();
+              if (!a.equals(getSelf())) {
+                  a.tell(new FlushMsg(viewId, this.id), getSelf());
+              }
+          }
       }
 
       private void onFlush(FlushMsg flushMsg){
-        displayGroup();
+        //displayGroup();
 
         int index1 = findIndexViewId(this.viewId);
         System.out.println("Io sono: " + this.id + ", sono in ONFLUSH, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = "+ index1);
 
+        if (this.id == 0)
+            displayGroup();
         if (intersectionListId.isEmpty()){
           intersectionListId = groups.get(index1 + 1).listId;
+          System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(intersectionListId.toArray()));
           intersectionListId.remove(this.id);
-          if (groups.size() - index1 > 1) {
+            System.out.println("Io sono: " + this.id + ", IntersectionList DOPO di remove: " + Arrays.toString(intersectionListId.toArray()));
+            if (groups.size() - index1 > 1) {
             for (int i = 1; i < inhibit_sends; i++) {
+                System.out.println("Io sono: " + this.id + " e sono dentro al FOR");
               intersectionListId.retainAll(groups.get(index1 + i).listId);
             }
           }
@@ -267,7 +273,8 @@
 
         if (intersectionListId.isEmpty()) { // If I received the flush messages from all the actors I need
           this.viewId = groups.get(index1 +1).viewId;
-          groups.remove(index1);  // remove the previous view in order to free memory
+          if (index1 != -1)
+            groups.remove(index1);  // remove the previous view in order to free memory
           appendToHistory(flushMsg);
           inhibit_sends --;
           deleteOldMsg();
@@ -281,9 +288,10 @@
         int counter = 0;
         while (I.hasNext()) {
           Groups m = I.next();
-          System.out.println("vista trovata nella strutt dati: "+ m.viewId);
-          if (m.viewId == viewId)
-            return counter;
+          if (m.viewId == viewId) {
+              System.out.println("Io sono: " + this.id  +", vista trovata in posizione: "+ counter);
+              return counter;
+          }
           counter++;
         }
         return -1;
