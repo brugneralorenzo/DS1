@@ -27,7 +27,7 @@ public class CausalMulticast {
     // the first four peers will be participating in conversations
     group.add(system.actorOf(Chatter.props(id), "Manager"));
     ActorRef a = system.actorOf(Chatter.props(-1), "Participants1");
-    ActorRef b = system.actorOf(Chatter.props(-1), "Participants2");
+   // ActorRef b = system.actorOf(Chatter.props(-1), "Participants2");
     //ActorRef c = system.actorOf(Chatter.props(-1), "Participants3");
 
 

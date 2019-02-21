@@ -196,17 +196,17 @@
       }
 
       private void onJoinGroupMsg(JoinGroupMsg msg) {
-          this.groups.add(msg.groups);
-          this.id = msg.id;
-          this.listId = msg.groups.listId;
-          System.out.printf("%s: joining a group of %d peers with ID %02d\n",
-                  getSelf().path().name(), this.groups.get(groups.size() -1).group.size(), this.id);
+        if (msg.id == 0)
+            this.groups.add(msg.groups);
+        this.id = msg.id;
+        System.out.printf("%s: joining a group of %d peers with ID %02d\n",
+                  getSelf().path().name(), msg.groups.group.size(), this.id);
       }
 
       private void viewChange(){    // the manager sends the viewChange message to everyone in the group and updates itself view
-        //this.viewId ;
         ViewMessage msg = new ViewMessage(this.groups.get(groups.size() -1));
-        System.out.println("Io sono: " + this.id + ", sono in view change, sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
+        System.out.println("Io sono: " + this.id + ", sono in view change, sono nella vista: " + this.viewId + " e la mia listID è: " + this.groups.get(findIndexViewId(this.viewId)).listId);
+        inhibit_sends++;
         multicast(msg);
         flush(lastViewToBeInstalled);
       }
@@ -215,7 +215,7 @@
                                                     // the view, the group and the list of IDs in the network
         inhibit_sends ++;
         this.groups.add(vm.groups);
-        System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
+        System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId );
 
         //TODO SEND ALL UNSTABLE MESSAGES TO EVERY NODE IN THE MOST RECENT VIEW
 
@@ -228,6 +228,8 @@
 
       private void flush(int viewId){
         System.out.println("Io sono: " + this.id + ", sono in flush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
+
+        // TODO: CHECK WHICH NODE HAS TO RECEIVE THE MESSAGES (MULTICAST)
         Iterator<ChatMsg> I = mq.iterator();
         while (I.hasNext()) {
           ChatMsg m = I.next();
@@ -235,36 +237,37 @@
           multicast(m);
           I.remove();
         }
+
         Iterator<ActorRef> iterator = groups.get(groups.size() -1).group.iterator(); // send a flush message to every actor in the most recent view
         while (iterator.hasNext()){
           ActorRef a = iterator.next();
-          a.tell(new FlushMsg(viewId, this.id), getSelf());
+          if (!a.equals(getSelf()))
+            a.tell(new FlushMsg(viewId, this.id), getSelf());
         }
       }
 
       private void onFlush(FlushMsg flushMsg){
-        int index = findIndexViewId(flushMsg.viewId);
-        System.out.println("Io sono: " + this.id + ", sono in ONFLUSH, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = "+ index);
-
         displayGroup();
-        System.out.println("flush msg view Id = " + flushMsg.viewId);
 
         int index1 = findIndexViewId(this.viewId);
+        System.out.println("Io sono: " + this.id + ", sono in ONFLUSH, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = "+ index1);
 
         if (intersectionListId.isEmpty()){
           intersectionListId = groups.get(index1 + 1).listId;
-          for (int i = 0; i < inhibit_sends; i++){
-            intersectionListId.retainAll(groups.get(index1 + i).listId);
+          intersectionListId.remove(this.id);
+          if (groups.size() - index1 > 1) {
+            for (int i = 1; i < inhibit_sends; i++) {
+              intersectionListId.retainAll(groups.get(index1 + i).listId);
+            }
           }
         }
-        System.out.println("IntersectionList: " + Arrays.toString(intersectionListId.toArray()));
+        System.out.println("Io sono: " + this.id + ", IntersectionList: " + Arrays.toString(intersectionListId.toArray()));
 
         intersectionListId.remove(flushMsg.senderId); // remove the ID of the sender from the intersection list
 
         if (intersectionListId.isEmpty()) { // If I received the flush messages from all the actors I need
-          int index2 = findIndexViewId(this.viewId);
-          this.viewId = groups.get(index2 +1).viewId;
-          groups.remove(index2);  // remove the previous view in order to free memory
+          this.viewId = groups.get(index1 +1).viewId;
+          groups.remove(index1);  // remove the previous view in order to free memory
           appendToHistory(flushMsg);
           inhibit_sends --;
           deleteOldMsg();
@@ -278,7 +281,7 @@
         int counter = 0;
         while (I.hasNext()) {
           Groups m = I.next();
-          System.out.println("vista trovata nella strutt dati =: "+ m.viewId);
+          System.out.println("vista trovata nella strutt dati: "+ m.viewId);
           if (m.viewId == viewId)
             return counter;
           counter++;
@@ -393,15 +396,4 @@
       }
     }
 
-    public <T> List<T> intersection(List<T> list1, List<T> list2) {
-      List<T> list = new ArrayList<T>();
-
-      for (T t : list1) {
-        if(list2.contains(t)) {
-          list.add(t);
-        }
-      }
-
-      return list;
-    }
   }
