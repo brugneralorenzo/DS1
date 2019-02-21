@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8ccf626-5a51-4a84-885f-442657d0a6be" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -24,8 +26,8 @@
       <file leaf-file-name="CausalMulticast.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+            <state relative-caret-position="141">
+              <caret line="29" column="25" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -33,8 +35,8 @@
       <file leaf-file-name="Chatter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1031">
-              <caret line="152" column="46" selection-start-line="152" selection-start-column="46" selection-end-line="152" selection-end-column="46" />
+            <state relative-caret-position="374">
+              <caret line="205" column="40" lean-forward="true" selection-start-line="205" selection-start-column="40" selection-end-line="205" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2045#2046#0" expanded="true" />
@@ -64,8 +66,8 @@
       <find>group</find>
       <find>groups</find>
       <find>flushC</find>
-      <find>inter</find>
       <find>display</find>
+      <find>inter</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -558,12 +560,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1550672016131</updated>
-      <workItem from="1550672017573" duration="20301000" />
+      <workItem from="1550672017573" duration="22418000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20301000" />
+    <option name="totallyTimeSpent" value="22418000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -576,6 +578,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1387" height="874" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" />
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
@@ -634,15 +637,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
+        <state relative-caret-position="141">
+          <caret line="29" column="25" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1031">
-          <caret line="152" column="46" selection-start-line="152" selection-start-column="46" selection-end-line="152" selection-end-column="46" />
+        <state relative-caret-position="374">
+          <caret line="205" column="40" lean-forward="true" selection-start-line="205" selection-start-column="40" selection-end-line="205" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2045#2046#0" expanded="true" />

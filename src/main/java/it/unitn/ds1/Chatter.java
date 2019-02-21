@@ -26,10 +26,15 @@
     private List<Groups> groups = new ArrayList<>();
     private List<Integer> intersectionListId = new ArrayList<>();
 
+    private List<Groups> managerGroups = new ArrayList<>();
+    private List<Groups> nodeGroups = new ArrayList<>();
 
 
 
-    // a buffer storing all received chat messages
+
+
+
+      // a buffer storing all received chat messages
     private StringBuffer chatHistory = new StringBuffer();
     // message queue to hold out-of-order messages
     private List<ChatMsg> mq = new ArrayList<>();
@@ -178,8 +183,9 @@
         List<ActorRef> tmp1 = groups.get(groups.size() -1).group;
         tmp1.add(getSender());
 
-
-        groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
+        //this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
+        System.out.println("Io sono: " + this.id + ", sono in onRequestJoin e i miei gruppi sono: ");
+        displayGroup();
 
         getSender().tell(new JoinGroupMsg(newId, groups.get(groups.size() -1)), getSelf()); //the manager informs the new node with the list of actors and his new ID
 
@@ -222,8 +228,8 @@
         flush(vm.groups.viewId);
 
         //TODO CHECK THESE TWO LINES OF CODE
-//        if ((listId.get(listId.size() -1)) == this.id)
-//            sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
+        if ((listId.get(listId.size() -1)) == this.id)
+            sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
       }
 
       private void flush(int viewId){
