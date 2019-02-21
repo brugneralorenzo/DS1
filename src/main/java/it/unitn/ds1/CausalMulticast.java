@@ -33,16 +33,17 @@ public class CausalMulticast {
 
 
     // send the group member list to everyone in the group
-   JoinGroupMsg join = new JoinGroupMsg(group,0);
-    for (ActorRef peer: group) {
-      peer.tell(join, null);
-    }
+       JoinGroupMsg join = new JoinGroupMsg(0, new Chatter.Groups(0, new ArrayList<Integer>(){{add(0);}}, group));
+        for (ActorRef peer: group) {
+          peer.tell(join, null);
+        }
 
 
     // tell the first chatter to start conversation
 
     group.get(0).tell(new Chatter.RequestJoin(), a);
-    group.get(0).tell(new Chatter.RequestJoin(), b);
+    //
+      //group.get(0).tell(new Chatter.RequestJoin(), b);
 
      //group.get(0).tell(new Chatter.RequestJoin(), c);
 
