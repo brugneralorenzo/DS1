@@ -3,6 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="a8ccf626-5a51-4a84-885f-442657d0a6be" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ChatMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ChatMsg.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$FlushMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$FlushMsg.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$Groups.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$Groups.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$JoinGroupMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$JoinGroupMsg.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ViewMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ViewMessage.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" afterDir="false" />
     </list>
@@ -22,12 +27,12 @@
     </projectState>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="CausalMulticast.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="141">
-              <caret line="29" column="25" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
+            <state relative-caret-position="375">
+              <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -35,14 +40,11 @@
       <file leaf-file-name="Chatter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="205" column="40" lean-forward="true" selection-start-line="205" selection-start-column="40" selection-end-line="205" selection-end-column="40" />
+            <state relative-caret-position="271">
+              <caret line="227" column="57" selection-start-line="227" selection-start-column="57" selection-end-line="227" selection-end-column="57" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2045#2046#0" expanded="true" />
-                <element signature="e#2085#2086#0" expanded="true" />
-                <element signature="e#14221#14222#0" expanded="true" />
-                <element signature="e#14288#14289#0" expanded="true" />
+                <element signature="e#14957#14958#0" expanded="true" />
+                <element signature="e#15024#15025#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -282,6 +284,7 @@
     <option name="modificationStamps">
       <map>
         <entry key="$PROJECT_DIR$" value="3081619351000" />
+        <entry key="$PROJECT_DIR$/.gradle" value="0" />
         <entry key="$PROJECT_DIR$/build.gradle" value="3539405667" />
       </map>
     </option>
@@ -417,17 +420,16 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1387" />
-    <option name="height" value="803" />
+    <option name="height" value="874" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -467,6 +469,7 @@
       </pane>
       <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -560,12 +563,13 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1550672016131</updated>
-      <workItem from="1550672017573" duration="22418000" />
+      <workItem from="1550672017573" duration="23582000" />
+      <workItem from="1550763873684" duration="4796000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22418000" />
+    <option name="totallyTimeSpent" value="28378000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -577,39 +581,39 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1387" height="874" extended-state="6" />
+    <frame x="0" y="23" width="1387" height="874" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info anchor="right" id="Palette" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="right" id="Maven Projects" />
-      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
-      <window_info id="Capture Tool" />
-      <window_info id="Designer" />
-      <window_info anchor="bottom" id="Build" weight="0.23234917" />
-      <window_info anchor="right" id="Database" />
-      <window_info id="Structure" order="1" sideWeight="0.5019763" side_tool="true" visible="true" weight="0.16579926" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32947233" />
-      <window_info anchor="bottom" id="Messages" weight="0.32991013" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info id="Image Layers" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34877735" />
-      <window_info anchor="bottom" id="Version Control" weight="0.32991013" />
-      <window_info anchor="bottom" id="Terminal" weight="0.32991013" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49802372" visible="true" weight="0.16579926" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="right" id="Gradle" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32947233" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="right" id="Maven Projects" order="3" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.44272843" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32991013" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32991013" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4965358" visible="true" weight="0.16802974" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="right" id="Gradle" order="3" />
+      <window_info id="Structure" order="1" sideWeight="0.5034642" side_tool="true" visible="true" weight="0.16802974" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info id="UI Designer" order="2" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.23234917" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -624,34 +628,45 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe.akka/akka-actor_2.12/2.5.11/88c0033b7d29f4700a928bc221b1124e8e22b5e2/akka-actor_2.12-2.5.11.jar!/akka/actor/ActorRef.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="28" column="46" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="66" />
-          <folding>
-            <element signature="e#3341#3342#0" expanded="true" />
-            <element signature="e#3397#3398#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="29" column="25" selection-start-line="29" selection-start-column="25" selection-end-line="29" selection-end-column="25" />
+        <state relative-caret-position="465">
+          <caret line="43" column="5" selection-start-line="43" selection-start-column="5" selection-end-line="43" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="205" column="40" lean-forward="true" selection-start-line="205" selection-start-column="40" selection-end-line="205" selection-end-column="40" />
+        <state relative-caret-position="2730">
+          <caret line="199" column="27" lean-forward="true" selection-start-line="199" selection-start-column="27" selection-end-line="199" selection-end-column="27" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2045#2046#0" expanded="true" />
-            <element signature="e#2085#2086#0" expanded="true" />
-            <element signature="e#14221#14222#0" expanded="true" />
-            <element signature="e#14288#14289#0" expanded="true" />
+            <element signature="e#14957#14958#0" expanded="true" />
+            <element signature="e#15024#15025#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe.akka/akka-actor_2.12/2.5.11/88c0033b7d29f4700a928bc221b1124e8e22b5e2/akka-actor_2.12-2.5.11.jar!/akka/actor/ActorRef.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="28" column="46" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="271">
+          <caret line="227" column="57" selection-start-line="227" selection-start-column="57" selection-end-line="227" selection-end-column="57" />
+          <folding>
+            <element signature="e#14957#14958#0" expanded="true" />
+            <element signature="e#15024#15025#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -10,6 +10,7 @@
   import java.lang.InterruptedException;
   import java.util.concurrent.TimeUnit;
 
+  import jdk.internal.cmm.SystemResourcePressureImpl;
   import scala.concurrent.duration.Duration;
 
 
@@ -24,17 +25,12 @@
     private List<ChatMsg> delivered = new ArrayList<>();
     private int lastViewToBeInstalled = 0;
     private List<Groups> groups = new ArrayList<>();
-    private List<Integer> intersectionListId = new ArrayList<>();
-
-    private List<Groups> managerGroups = new ArrayList<>();
-    private List<Groups> nodeGroups = new ArrayList<>();
+    private List<ActorRef> intersectionListId = new ArrayList<>();
 
 
 
 
-
-
-      // a buffer storing all received chat messages
+    // a buffer storing all received chat messages
     private StringBuffer chatHistory = new StringBuffer();
     // message queue to hold out-of-order messages
     private List<ChatMsg> mq = new ArrayList<>();
@@ -52,9 +48,9 @@
     }
 
     public static class Groups {
-      public int viewId;
-      public List<Integer> listId = new ArrayList<>();
-      public List<ActorRef> group = new ArrayList<>();
+      private int viewId;
+      private List<Integer> listId;
+      private List<ActorRef> group;
       public Groups(int viewId, List<Integer> listId, List<ActorRef> group){
         this.viewId = viewId;
         this.listId = listId;
@@ -178,12 +174,11 @@
         lastViewToBeInstalled++;
 
         int newId = Collections.max(groups.get(groups.size() -1).listId) +1;
-        List<Integer> tmp = groups.get(groups.size() -1).listId;
+        List<Integer> tmp = new ArrayList<>(groups.get(groups.size() -1).listId);
+        List<ActorRef> tmp1 = new ArrayList<>(groups.get(groups.size() -1).group);
         tmp.add(newId);
-        List<ActorRef> tmp1 = groups.get(groups.size() -1).group;
         tmp1.add(getSender());
-
-        //this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
+        this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
         System.out.println("Io sono: " + this.id + ", sono in onRequestJoin e i miei gruppi sono: ");
         displayGroup();
 
@@ -202,8 +197,9 @@
       }
 
       private void onJoinGroupMsg(JoinGroupMsg msg) {
-        if (msg.id == 0)
+        if (msg.id == 0) {
             this.groups.add(msg.groups);
+        }
         this.id = msg.id;
         System.out.printf("%s: joining a group of %d peers with ID %02d\n",
                   getSelf().path().name(), msg.groups.group.size(), this.id);
@@ -221,14 +217,15 @@
                                                     // the view, the group and the list of IDs in the network
         inhibit_sends ++;
         this.groups.add(vm.groups);
-        System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId );
+        System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId);
 
         //TODO SEND ALL UNSTABLE MESSAGES TO EVERY NODE IN THE MOST RECENT VIEW
 
         flush(vm.groups.viewId);
 
         //TODO CHECK THESE TWO LINES OF CODE
-        if ((listId.get(listId.size() -1)) == this.id)
+
+        if ((groups.get(groups.size() -1).listId.size()-1) == this.id)
             sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
       }
 
@@ -254,33 +251,38 @@
       }
 
       private void onFlush(FlushMsg flushMsg){
-        //displayGroup();
 
+          System.out.println("Io sono: " + this.id + " ed entro in onFlush");
         int index1 = findIndexViewId(this.viewId);
         System.out.println("Io sono: " + this.id + ", sono in ONFLUSH, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = "+ index1);
 
         if (this.id == 0)
             displayGroup();
-        if (intersectionListId.isEmpty()){
-          intersectionListId = groups.get(index1 + 1).listId;
-          System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(intersectionListId.toArray()));
-          intersectionListId.remove(this.id);
-            System.out.println("Io sono: " + this.id + ", IntersectionList DOPO di remove: " + Arrays.toString(intersectionListId.toArray()));
+            intersectionListId = groups.get(index1 + 1).group;
+            List<ActorRef> tmp = new ArrayList<>(intersectionListId);
+
+            System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(tmp.toArray()));
+            tmp.remove(getSelf());
+            System.out.println("Io sono: " + this.id + ", IntersectionList DOPO di remove: " + Arrays.toString(tmp.toArray()));
+
             if (groups.size() - index1 > 1) {
-            for (int i = 1; i < inhibit_sends; i++) {
-                System.out.println("Io sono: " + this.id + " e sono dentro al FOR");
-              intersectionListId.retainAll(groups.get(index1 + i).listId);
+                for (int i = 1; i < inhibit_sends; i++) {
+                    System.out.println("Io sono: " + this.id + " e sono dentro al FOR");
+                    tmp.retainAll(groups.get(index1 + i).group);
+                }
             }
-          }
-        }
-        System.out.println("Io sono: " + this.id + ", IntersectionList: " + Arrays.toString(intersectionListId.toArray()));
+        System.out.println("Io sono: " + this.id + ", IntersectionList: " + Arrays.toString(tmp.toArray()));
+            System.out.println("Io sono: " + this.id + " e il sender del messaggio flush è: " + flushMsg.senderId);
 
-        intersectionListId.remove(flushMsg.senderId); // remove the ID of the sender from the intersection list
+        //tmp.remove(flushMsg.senderId); // remove the ID of the sender from the intersection list
 
-        if (intersectionListId.isEmpty()) { // If I received the flush messages from all the actors I need
+          tmp.remove(getSender());
+
+        if (tmp.isEmpty()) { // If I received the flush messages from all the actors I need
           this.viewId = groups.get(index1 +1).viewId;
-          if (index1 != -1)
-            groups.remove(index1);  // remove the previous view in order to free memory
+          if (index1 != -1 && this.id == 0) {
+              groups.remove(index1);  // remove the previous view in order to free memory
+          }
           appendToHistory(flushMsg);
           inhibit_sends --;
           deleteOldMsg();
@@ -290,6 +292,7 @@
 
       private int findIndexViewId (int viewId){
       System.out.println("Io sono: " + this.id  + ", vista alla find: "+ viewId + " la size di groups: "+ groups.size());
+      displayGroup();
         Iterator<Groups> I = groups.iterator();
         int counter = 0;
         while (I.hasNext()) {
@@ -396,7 +399,7 @@
     }
 
     private void displayGroup(){
-      Iterator<Groups> I = groups.iterator();
+      Iterator<Groups> I = this.groups.iterator();
       while (I.hasNext()) {
         Groups m = I.next();
         System.out.printf("\n------------------ \n" );
