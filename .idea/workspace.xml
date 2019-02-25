@@ -3,12 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a8ccf626-5a51-4a84-885f-442657d0a6be" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ChatMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ChatMsg.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$FlushMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$FlushMsg.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$Groups.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$Groups.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$JoinGroupMsg.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$JoinGroupMsg.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ViewMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter$ViewMessage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/it/unitn/ds1/Chatter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
@@ -31,8 +27,12 @@
       <file leaf-file-name="CausalMulticast.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+            <state relative-caret-position="193">
+              <caret line="53" column="10" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="10" />
+              <folding>
+                <element signature="e#600#601#0" expanded="true" />
+                <element signature="e#671#672#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -40,11 +40,17 @@
       <file leaf-file-name="Chatter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="227" column="57" selection-start-line="227" selection-start-column="57" selection-end-line="227" selection-end-column="57" />
+            <state relative-caret-position="451">
+              <caret line="269" column="21" selection-start-line="269" selection-start-column="21" selection-end-line="269" selection-end-column="21" />
               <folding>
-                <element signature="e#14957#14958#0" expanded="true" />
-                <element signature="e#15024#15025#0" expanded="true" />
+                <element signature="e#2227#2228#0" expanded="true" />
+                <element signature="e#2271#2272#0" expanded="true" />
+                <element signature="e#3260#3261#0" expanded="true" />
+                <element signature="e#3286#3287#0" expanded="true" />
+                <element signature="e#3327#3328#0" expanded="true" />
+                <element signature="e#3398#3399#0" expanded="true" />
+                <element signature="e#16380#16381#0" expanded="true" />
+                <element signature="e#16449#16450#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -65,11 +71,18 @@
       <find>stable</find>
       <find>joingr</find>
       <find>group</find>
-      <find>group</find>
-      <find>groups</find>
       <find>flushC</find>
       <find>display</find>
       <find>inter</find>
+      <find>size</find>
+      <find>printH</find>
+      <find>JoinGroupMsg</find>
+      <find>FOR</find>
+      <find>vista all</find>
+      <find>multicast</find>
+      <find>listId s</find>
+      <find>remove</find>
+      <find>System.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -283,7 +296,7 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3081619351000" />
+        <entry key="$PROJECT_DIR$" value="3101663424000" />
         <entry key="$PROJECT_DIR$/.gradle" value="0" />
         <entry key="$PROJECT_DIR$/build.gradle" value="3539405667" />
       </map>
@@ -420,16 +433,18 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
-    <option name="width" value="1387" />
-    <option name="height" value="874" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="79" />
+    <option name="y" value="25" />
+    <option name="width" value="921" />
+    <option name="height" value="1055" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -467,7 +482,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="AndroidView" />
     </panes>
@@ -565,11 +579,13 @@
       <updated>1550672016131</updated>
       <workItem from="1550672017573" duration="23582000" />
       <workItem from="1550763873684" duration="4796000" />
+      <workItem from="1550831749760" duration="949000" />
+      <workItem from="1551093184692" duration="10135000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28378000" />
+    <option name="totallyTimeSpent" value="39462000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -581,38 +597,38 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1387" height="874" extended-state="0" />
+    <frame x="79" y="25" width="1841" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32947233" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.32947233" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.32910052" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info id="Image Layers" order="2" />
-      <window_info anchor="right" id="Capture Analysis" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5002716" side_tool="true" weight="0.44973546" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.44272843" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32991013" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4997284" visible="true" weight="0.15238096" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32991013" />
-      <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4965358" visible="true" weight="0.16802974" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49438202" visible="true" weight="0.12547529" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="Gradle" order="3" />
-      <window_info id="Structure" order="1" sideWeight="0.5034642" side_tool="true" visible="true" weight="0.16802974" />
+      <window_info id="Structure" order="1" sideWeight="0.505618" side_tool="true" visible="true" weight="0.12547529" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info id="UI Designer" order="2" />
-      <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="UI Designer" order="2" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info id="Image Layers" order="2" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Build" order="7" weight="0.23234917" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
@@ -624,10 +640,62 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="4" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1008">
+          <caret line="56" column="31" selection-start-line="56" selection-start-column="31" selection-end-line="56" selection-end-column="31" />
+          <folding>
+            <element signature="e#600#601#0" expanded="true" />
+            <element signature="e#671#672#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7002">
+          <caret line="389" column="51" lean-forward="true" selection-start-line="389" selection-start-column="51" selection-end-line="389" selection-end-column="51" />
+          <folding>
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2271#2272#0" expanded="true" />
+            <element signature="e#3260#3261#0" expanded="true" />
+            <element signature="e#3286#3287#0" expanded="true" />
+            <element signature="e#3327#3328#0" expanded="true" />
+            <element signature="e#3398#3399#0" expanded="true" />
+            <element signature="e#16380#16381#0" expanded="true" />
+            <element signature="e#16449#16450#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="774">
+          <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4086">
+          <caret line="227" lean-forward="true" selection-start-line="227" selection-end-line="227" />
+          <folding>
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2271#2272#0" expanded="true" />
+            <element signature="e#3260#3261#0" expanded="true" />
+            <element signature="e#3286#3287#0" expanded="true" />
+            <element signature="e#3327#3328#0" expanded="true" />
+            <element signature="e#3398#3399#0" expanded="true" />
+            <element signature="e#16380#16381#0" expanded="true" />
+            <element signature="e#16449#16450#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="465">
@@ -640,8 +708,14 @@
         <state relative-caret-position="2730">
           <caret line="199" column="27" lean-forward="true" selection-start-line="199" selection-start-column="27" selection-end-line="199" selection-end-column="27" />
           <folding>
-            <element signature="e#14957#14958#0" expanded="true" />
-            <element signature="e#15024#15025#0" expanded="true" />
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2271#2272#0" expanded="true" />
+            <element signature="e#3260#3261#0" expanded="true" />
+            <element signature="e#3286#3287#0" expanded="true" />
+            <element signature="e#3327#3328#0" expanded="true" />
+            <element signature="e#3398#3399#0" expanded="true" />
+            <element signature="e#16380#16381#0" expanded="true" />
+            <element signature="e#16449#16450#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -655,18 +729,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="43" column="46" lean-forward="true" selection-start-line="43" selection-start-column="46" selection-end-line="43" selection-end-column="46" />
+        <state relative-caret-position="193">
+          <caret line="53" column="10" selection-start-line="53" selection-start-column="10" selection-end-line="53" selection-end-column="10" />
+          <folding>
+            <element signature="e#600#601#0" expanded="true" />
+            <element signature="e#671#672#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="227" column="57" selection-start-line="227" selection-start-column="57" selection-end-line="227" selection-end-column="57" />
+        <state relative-caret-position="451">
+          <caret line="269" column="21" selection-start-line="269" selection-start-column="21" selection-end-line="269" selection-end-column="21" />
           <folding>
-            <element signature="e#14957#14958#0" expanded="true" />
-            <element signature="e#15024#15025#0" expanded="true" />
+            <element signature="e#2227#2228#0" expanded="true" />
+            <element signature="e#2271#2272#0" expanded="true" />
+            <element signature="e#3260#3261#0" expanded="true" />
+            <element signature="e#3286#3287#0" expanded="true" />
+            <element signature="e#3327#3328#0" expanded="true" />
+            <element signature="e#3398#3399#0" expanded="true" />
+            <element signature="e#16380#16381#0" expanded="true" />
+            <element signature="e#16449#16450#0" expanded="true" />
           </folding>
         </state>
       </provider>
