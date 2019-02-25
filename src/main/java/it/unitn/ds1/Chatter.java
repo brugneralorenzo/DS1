@@ -3,6 +3,7 @@ package it.unitn.ds1;
 import akka.actor.ActorRef;
 import akka.actor.AbstractActor;
 
+import java.sql.Time;
 import java.util.*;
 import java.io.Serializable;
 
@@ -28,6 +29,7 @@ class Chatter extends AbstractActor {
     private final List<Groups> groups = new ArrayList<>();
     private List<ActorRef> intersectionListId = new ArrayList<>();
     private final List<ActorRef> receivedFlush = new ArrayList<>();
+    private final static int BEACON_INTERVAL = 5000;
 
 
     // a buffer storing all received chat messages
@@ -62,27 +64,36 @@ class Chatter extends AbstractActor {
 
     // A message requesting the peer to start a discussion on his topic
     public static class StartChatMsg implements Serializable {
+        private final String messageString;
+
+        public StartChatMsg(String messageString){
+            this.messageString = messageString;
+        }
     }
 
     public static class RequestJoin implements Serializable {
     }
 
     public static class ViewMessage implements Serializable {
-        private Groups groups;
+        private final Groups groups;
 
         public ViewMessage(Groups groups) {
             this.groups = groups;
         }
     }
 
+    public static class Timeout implements Serializable {
+
+    }
+
 
     // Chat message
     public static class ChatMsg implements Serializable {
-        public final String id;      // the ID of the message composed by message ID and sender ID
-        public final int senderId;   // the ID of the message sender
-        public final int viewId;
+        private final String id;      // the ID of the message composed by message ID and sender ID
+        private final int senderId;   // the ID of the message sender
+        private final int viewId;
         private int type;  //identify the type of the message: 0 normal message, 1 stable message, 2 message during flush algorithm
-        public final String stablemessageId;   // identify the stable messageID: initialized to -1 if it is a normal message
+        private final String stablemessageId;   // identify the stable messageID: initialized to -1 if it is a normal message
 
 
         public ChatMsg(String id, int senderId, int view, int type, String stable) {
@@ -113,14 +124,16 @@ class Chatter extends AbstractActor {
     }
 
     public static class FlushMsg implements Serializable {
-        private int viewId;
-        private int senderId;
+        private final int viewId;
+        private final int senderId;
 
         public FlushMsg(int viewId, int senderId) {
             this.viewId = viewId;
             this.senderId = senderId;
         }
     }
+
+    public static class Beacon implements Serializable{}
 
 
     /* -- Actor behaviour ----------------------------------------------------- */
@@ -138,6 +151,8 @@ class Chatter extends AbstractActor {
             if (result && type == 0) {
                 stableMsg(id);
                 appendToHistory(m); // append the sent message
+            } else {
+
             }
         }
     }
@@ -148,11 +163,13 @@ class Chatter extends AbstractActor {
     }
 
     private boolean multicast(Serializable m, Groups groups) { // our multicast implementation
+        int message_sent = 0;
         List<ActorRef> shuffledGroup = new ArrayList<>(groups.group);
         Collections.shuffle(shuffledGroup);
         for (ActorRef p : shuffledGroup) {
             if (!p.equals(getSelf())) { // not sending to self
                 p.tell(m, getSelf());
+                message_sent++;
                 try {
                     Thread.sleep(rnd.nextInt(10));
                 } catch (InterruptedException e) {
@@ -160,7 +177,9 @@ class Chatter extends AbstractActor {
                 }
             }
         }
-        return true;
+        if (message_sent == groups.group.size() - 1)
+            return true;
+        return false;
     }
 
     // Here we define the mapping between the received message types and our actor methods
@@ -175,7 +194,13 @@ class Chatter extends AbstractActor {
                 .match(PrintHistoryMsg.class, this::printHistory)
                 .match(ViewMessage.class, this::onViewMessage)
                 .match(FlushMsg.class, this::onFlush)
+                .match(Timeout.class, this::onTimeout)
+                .match(Beacon.class, this::onBeacon)
                 .build();
+    }
+
+    private void onBeacon(Beacon beaconMessage) {
+
     }
 
     private void onTimerMsg(TimerMsg timerMsg) {
@@ -211,7 +236,8 @@ class Chatter extends AbstractActor {
     }
 
     private void onStartChatMsg(StartChatMsg msg) {
-        //sendChatMsg(0, 0, -1); // start with message 0
+        sendChatMsg(msg.messageString, 0, "-1");
+        setTimeout(BEACON_INTERVAL);
     }
 
     private void onJoinGroupMsg(JoinGroupMsg msg) {
@@ -223,11 +249,11 @@ class Chatter extends AbstractActor {
                 getSelf().path().name(), msg.groups.group.size(), this.id);
     }
 
-    private void viewChange()  {    // the manager sends the viewChange message to everyone in the group and updates itself view
+    private void viewChange() {    // the manager sends the viewChange message to everyone in the group and updates itself view
         ViewMessage msg = new ViewMessage(this.groups.get(groups.size() - 1));
         //System.out.println("Io sono: " + this.id + ", sono in view change, sono nella vista: " + this.viewId + " e la mia listID è: " + this.groups.get(findIndexViewId(this.viewId)).listId);
         inhibit_sends++;
-        multicast(msg, groups.get(groups.size()-1));
+        multicast(msg, groups.get(groups.size() - 1));
         flush(lastViewToBeInstalled);
     }
 
@@ -236,22 +262,21 @@ class Chatter extends AbstractActor {
         inhibit_sends++;
         this.groups.add(vm.groups);
 
-            //System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId);
+        //System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId);
 
         //TODO SEND ALL UNSTABLE MESSAGES TO EVERY NODE IN THE MOST RECENT VIEW
 
         flush(vm.groups.viewId);
 
 
-            //System.out.println("listId size: " + groups.get(groups.size() - 1).listId.size());
+        //System.out.println("listId size: " + groups.get(groups.size() - 1).listId.size());
         if (groups.get(groups.size() - 1).listId.get(groups.get(groups.size() - 1).listId.size() - 1) == this.id)
-            sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
-
+            getSelf().tell(new StartChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount)), getSelf());
     }
 
     private void flush(int viewId) {
 
-            //System.out.println("Io sono: " + this.id + ", sono in flush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
+        //System.out.println("Io sono: " + this.id + ", sono in flush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
 
         // TODO: CHECK WHICH NODE HAS TO RECEIVE THE MESSAGES (MULTICAST)
         Iterator<ActorRef> iterator = groups.get(groups.size() - 1).group.iterator();
@@ -264,8 +289,8 @@ class Chatter extends AbstractActor {
                     m.type = 2;
                     a.tell(m, getSelf());
                     try {
-                        Thread.sleep(rnd.nextInt(10));
-                    }catch (Exception e){
+                        Thread.sleep(rnd.nextInt(20));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     I.remove();
@@ -280,8 +305,8 @@ class Chatter extends AbstractActor {
                 a.tell(new FlushMsg(viewId, this.id), getSelf());
             }
             try {
-                Thread.sleep(rnd.nextInt(10));
-            }catch (Exception e){
+                Thread.sleep(rnd.nextInt(20));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -310,12 +335,12 @@ class Chatter extends AbstractActor {
         }
 */
 
-        intersectionListId = new ArrayList<>(groups.get(index1 + 1).group) ;
+        intersectionListId = new ArrayList<>(groups.get(index1 + 1).group);
         receivedFlush.add(getSender());
 
 
         //System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(tmp.toArray()));
-        if(!receivedFlush.contains(getSelf()))
+        if (!receivedFlush.contains(getSelf()))
             receivedFlush.add(getSelf());
 
         /*if (groups.size() - index1 > 1) {
@@ -339,9 +364,23 @@ class Chatter extends AbstractActor {
         }
     }
 
+    private void onTimeout(Timeout timeoutMessage) {
+        ActorRef manager = this.groups.get(findIndexViewId(this.viewId)).group.get(0);
+        manager.tell(new Beacon(), getSelf());
+        setTimeout(BEACON_INTERVAL);
+    }
+
+    private void setTimeout(int time) {
+        getContext().system().scheduler().scheduleOnce(
+                Duration.create(time, TimeUnit.MILLISECONDS),
+                getSelf(),
+                new Timeout(),
+                getContext().system().dispatcher(), getSelf());
+    }
+
     private int findIndexViewId(int viewId) {
 
-            //System.out.println("Io sono: " + this.id + ", cerco vista: " + viewId + " la size del mio groups: " + groups.size());
+        //System.out.println("Io sono: " + this.id + ", cerco vista: " + viewId + " la size del mio groups: " + groups.size());
         displayGroup();
         Iterator<Groups> I = groups.iterator();
         int counter = 0;

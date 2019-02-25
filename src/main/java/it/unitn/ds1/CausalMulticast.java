@@ -48,9 +48,9 @@ public class CausalMulticast {
         // tell the first chatter to start conversation
 
         group.get(0).tell(new Chatter.RequestJoin(), a);
-        Thread.sleep(7000);
+        Thread.sleep(5000);
         group.get(0).tell(new Chatter.RequestJoin(), b);
-        Thread.sleep(7000);
+        Thread.sleep(5000);
         group.get(0).tell(new Chatter.RequestJoin(), c);
 
 
