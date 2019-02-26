@@ -7,6 +7,7 @@ import java.sql.Time;
 import java.util.*;
 import java.io.Serializable;
 
+import akka.actor.Cancellable;
 import akka.actor.Props;
 
 import java.lang.Thread;
@@ -30,6 +31,10 @@ class Chatter extends AbstractActor {
     private List<ActorRef> intersectionListId = new ArrayList<>();
     private final List<ActorRef> receivedFlush = new ArrayList<>();
     private final static int BEACON_INTERVAL = 5000;
+    private final static int MANAGER_TIMEOUT = 1000000;
+    private Cancellable cancellable;
+    private final HashMap <ActorRef,Cancellable> map = new HashMap<>();
+    private boolean crashed = false;
 
 
     // a buffer storing all received chat messages
@@ -83,7 +88,13 @@ class Chatter extends AbstractActor {
     }
 
     public static class Timeout implements Serializable {
-
+        private final ActorRef actorRef;
+        public Timeout (ActorRef actorRef){ //use it for manager
+            this.actorRef = actorRef;
+        }
+        public Timeout(){ //use it for partecipants
+            this.actorRef = null;
+        }
     }
 
 
@@ -138,6 +149,9 @@ class Chatter extends AbstractActor {
 
     /* -- Actor behaviour ----------------------------------------------------- */
     private void sendChatMsg(String id, int type, String stable) {
+        if (crashed)
+            return;
+
         if (type == 0) {
             getContext().system().scheduler().scheduleOnce(Duration.create(3, TimeUnit.SECONDS), getSelf(), new TimerMsg(),
                     getContext().system().dispatcher(), null);
@@ -163,6 +177,7 @@ class Chatter extends AbstractActor {
     }
 
     private boolean multicast(Serializable m, Groups groups) { // our multicast implementation
+
         int message_sent = 0;
         List<ActorRef> shuffledGroup = new ArrayList<>(groups.group);
         Collections.shuffle(shuffledGroup);
@@ -200,7 +215,13 @@ class Chatter extends AbstractActor {
     }
 
     private void onBeacon(Beacon beaconMessage) {
+        System.out.println("Io sono "+ this.id + ", ricevo beacon da "+getSender());
+        if(map.containsKey(getSender())){
+            Cancellable cancellable = map.get(getSender());
+            cancellable.cancel();
 
+            setTimeout(MANAGER_TIMEOUT, getSender());
+        }
     }
 
     private void onTimerMsg(TimerMsg timerMsg) {
@@ -210,7 +231,13 @@ class Chatter extends AbstractActor {
     private synchronized void onRequestJoin(RequestJoin rj) throws InterruptedException {   // manager receives the request to join a node to the group
         lastViewToBeInstalled++;
 
-        int newId = Collections.max(groups.get(groups.size() - 1).listId) + 1;
+        int newId = 0;
+        int max = 0;
+        for(int i = 0; i < groups.size(); i++){
+            if(Collections.max(groups.get(i).listId) > max)
+                max = Collections.max(groups.get(i).listId);  // take the highest ID ever been in the system
+        }
+        newId = max + 1;
 
         List<Integer> tmp = new ArrayList<>(groups.get(groups.size() - 1).listId);
         List<ActorRef> tmp1 = new ArrayList<>(groups.get(groups.size() - 1).group);
@@ -220,24 +247,24 @@ class Chatter extends AbstractActor {
 
         this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
 
-        //System.out.println("Io sono: " + this.id + ", sono in onRequestJoin e i miei gruppi sono: ");
-        displayGroup();
-
         getSender().tell(new JoinGroupMsg(newId, groups.get(groups.size() - 1)), getSelf()); //the manager informs the new node with the list of actors and his new ID
 
-        //System.out.println("Io sono: " + this.id + ", sono in onRequestJoin, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId);
-
         CausalMulticast.addToGroup(getSender());
-
         viewChange();
+
+        setTimeout(MANAGER_TIMEOUT,getSender());
         if ((groups.get(groups.size() - 1).group).size() == 2) {
             sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
         }
     }
 
     private void onStartChatMsg(StartChatMsg msg) {
+        if (crashed)
+            return;
+
         sendChatMsg(msg.messageString, 0, "-1");
-        setTimeout(BEACON_INTERVAL);
+        System.out.println("io sono "+this.id + ", setto timeout beacon");
+        setTimeout(BEACON_INTERVAL,null);
     }
 
     private void onJoinGroupMsg(JoinGroupMsg msg) {
@@ -249,7 +276,10 @@ class Chatter extends AbstractActor {
                 getSelf().path().name(), msg.groups.group.size(), this.id);
     }
 
-    private void viewChange() {    // the manager sends the viewChange message to everyone in the group and updates itself view
+    /*
+    * Manager sends the viewChange message to everyone in the group and updates itself view
+     */
+    private void viewChange() {
         ViewMessage msg = new ViewMessage(this.groups.get(groups.size() - 1));
         //System.out.println("Io sono: " + this.id + ", sono in view change, sono nella vista: " + this.viewId + " e la mia listID è: " + this.groups.get(findIndexViewId(this.viewId)).listId);
         inhibit_sends++;
@@ -257,17 +287,17 @@ class Chatter extends AbstractActor {
         flush(lastViewToBeInstalled);
     }
 
-    private void onViewMessage(ViewMessage vm) {   // participants receive a message with to change the view and they update
-        // the view, the group and the list of IDs in the network
+    /*
+      Partecipants of the group receive the view change message
+     */
+    private void onViewMessage(ViewMessage vm) {
+        if (crashed)
+            return;
+
         inhibit_sends++;
         this.groups.add(vm.groups);
 
-        //System.out.println("Io sono: " + this.id + ", sono in onview Message, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId);
-
-        //TODO SEND ALL UNSTABLE MESSAGES TO EVERY NODE IN THE MOST RECENT VIEW
-
         flush(vm.groups.viewId);
-
 
         //System.out.println("listId size: " + groups.get(groups.size() - 1).listId.size());
         if (groups.get(groups.size() - 1).listId.get(groups.get(groups.size() - 1).listId.size() - 1) == this.id)
@@ -275,10 +305,9 @@ class Chatter extends AbstractActor {
     }
 
     private void flush(int viewId) {
+        if (crashed)
+            return;
 
-        //System.out.println("Io sono: " + this.id + ", sono in flush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
-
-        // TODO: CHECK WHICH NODE HAS TO RECEIVE THE MESSAGES (MULTICAST)
         Iterator<ActorRef> iterator = groups.get(groups.size() - 1).group.iterator();
         Iterator<ChatMsg> I = mq.iterator();
         while (I.hasNext()) {
@@ -313,69 +342,78 @@ class Chatter extends AbstractActor {
     }
 
     private void onFlush(FlushMsg flushMsg) {
+        if (crashed)
+            return;
 
-        int index1 = findIndexViewId(this.viewId);
-        System.out.println("Io sono: " + this.id + ", sono in onflush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = " + index1 + ", sto ricevendo flush da " + getSender());
+        int tmp = findIndexViewId(flushMsg.viewId);
+        if (tmp != -1) {  //if I have just received the last view
+            int index1 = findIndexViewId(this.viewId);
+            //System.out.println("Io sono: " + this.id + ", sono in onflush, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e il flush message viewid è: " + flushMsg.viewId + " e index = " + index1 + ", sto ricevendo flush da " + getSender());
+
+            intersectionListId = new ArrayList<>(groups.get(index1 + 1).group);
+            receivedFlush.add(getSender());
 
 
-        /*Iterator<Groups> I = this.groups.iterator();
-        if(this.id == 2) {
-            System.out.printf("\n------------------ \n");
-            System.out.println("Actor id:" + this.id + " gropus size = " + groups.size());
-            while (I.hasNext()) {
-                Groups m = I.next();
-                System.out.printf("view id: %d,", m.viewId);
-                System.out.printf("ListId:  ");
-                for (int i = 0; i < m.listId.size(); i++) {
-                    System.out.printf("%d, ", m.listId.get(i));
+            //System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(tmp.toArray()));
+            if (!receivedFlush.contains(getSelf()))
+                receivedFlush.add(getSelf());
+
+            if (receivedFlush.containsAll(intersectionListId)) { // If I received the flush messages from all the actors I need
+                this.viewId = groups.get(index1 + 1).viewId;
+                if (index1 != -1) {
+                    groups.remove(index1);  // remove the previous view in order to free memory
                 }
-                System.out.printf("\n");
+                appendToHistory(flushMsg);
+                inhibit_sends--;
+                deleteOldMsg();
+                receivedFlush.clear();
             }
-            System.out.printf("------------------\n");
+        } else{
+            receivedFlush.add(getSender());
         }
-*/
+    }
 
-        intersectionListId = new ArrayList<>(groups.get(index1 + 1).group);
-        receivedFlush.add(getSender());
-
-
-        //System.out.println("Io sono: " + this.id + ", IntersectionList prima di remove: " + Arrays.toString(tmp.toArray()));
-        if (!receivedFlush.contains(getSelf()))
-            receivedFlush.add(getSelf());
-
-        /*if (groups.size() - index1 > 1) {
-            for (int i = 1; i < inhibit_sends; i++) {
-                receivedFlush.retainAll(groups.get(index1 + i).group);
-            }
-        }*/
-
-        if (receivedFlush.containsAll(intersectionListId)) { // If I received the flush messages from all the actors I need
-            this.viewId = groups.get(index1 + 1).viewId;
-            if (index1 != -1) {
-                groups.remove(index1);  // remove the previous view in order to free memory
-            }
-            appendToHistory(flushMsg);
-            inhibit_sends--;
-            deleteOldMsg();
-            /*if(this.id == 2)
-                System.out.println("Io sono: " + this.id + ", sono in onFlush (dentro l'if), il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
-            */
-            receivedFlush.clear();
+    private void setTimeout(int time, ActorRef actorRef) {
+        if (crashed)
+            return;
+        if(actorRef == null)
+            getContext().system().scheduler().scheduleOnce(
+                    Duration.create(time, TimeUnit.MILLISECONDS),
+                    getSelf(),
+                    new Timeout(),
+                    getContext().system().dispatcher(), getSelf());
+        else {
+            cancellable = getContext().system().scheduler().scheduleOnce(
+                    Duration.create(time, TimeUnit.MILLISECONDS),
+                    getSelf(),
+                    new Timeout(actorRef),
+                    getContext().system().dispatcher(), getSelf());
+            map.put(actorRef,cancellable);
         }
+
     }
 
     private void onTimeout(Timeout timeoutMessage) {
-        ActorRef manager = this.groups.get(findIndexViewId(this.viewId)).group.get(0);
-        manager.tell(new Beacon(), getSelf());
-        setTimeout(BEACON_INTERVAL);
-    }
+        if (crashed)
+            return;
+        if (this.id != 0){
+            ActorRef manager = this.groups.get(findIndexViewId(this.viewId)).group.get(0);
+            manager.tell(new Beacon(), getSelf());
+            setTimeout(BEACON_INTERVAL, null);
+        }else{
+            List<Integer> tmp = new ArrayList<>(groups.get(groups.size() - 1).listId);
+            List<ActorRef> tmp1 = new ArrayList<>(groups.get(groups.size() - 1).group);
 
-    private void setTimeout(int time) {
-        getContext().system().scheduler().scheduleOnce(
-                Duration.create(time, TimeUnit.MILLISECONDS),
-                getSelf(),
-                new Timeout(),
-                getContext().system().dispatcher(), getSelf());
+            int index = tmp1.indexOf(timeoutMessage.actorRef);
+            tmp.remove(index);
+            tmp1.remove(timeoutMessage.actorRef);
+
+            lastViewToBeInstalled++;
+
+            this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
+            System.out.println("Io sono "+this.id +", Someone is dead: " + timeoutMessage.actorRef);
+
+        }
     }
 
     private int findIndexViewId(int viewId) {
@@ -406,6 +444,8 @@ class Chatter extends AbstractActor {
     }
 
     private void onChatMsg(ChatMsg msg) {
+        if (crashed)
+            return;
 
         if (msg.type == 1) {  // stable message
             final ChatMsg deliverable = findDeliverable(msg);
@@ -420,6 +460,9 @@ class Chatter extends AbstractActor {
                 deliver(msg);
             } else if (msg.viewId > this.viewId)
                 this.mq.add(msg);
+        }
+        else{
+            System.out.println("qualcosa di strano OOO");
         }
     }
 
@@ -481,6 +524,13 @@ class Chatter extends AbstractActor {
                 s += ", ";
         }
         return s;
+    }
+
+
+    // emulate a crash
+    private void crash(int recoverIn) {
+        crashed = true;
+        System.out.println("CRASH!!!");
     }
 
     private void displayGroup() {
