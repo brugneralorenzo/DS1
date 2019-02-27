@@ -3,9 +3,8 @@ package it.unitn.ds1;
 import akka.actor.ActorRef;
 import akka.actor.AbstractActor;
 
-import java.sql.Time;
+import java.io.*;
 import java.util.*;
-import java.io.Serializable;
 
 import akka.actor.Cancellable;
 import akka.actor.Props;
@@ -17,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 //import jdk.internal.cmm.SystemResourcePressureImpl;
 import scala.concurrent.duration.Duration;
 
+//TODO: FARE FUNZIONE CREPA MENTRE MANDI
 class Chatter extends AbstractActor {
 
     private Random rnd = new Random();
@@ -35,7 +35,6 @@ class Chatter extends AbstractActor {
     private Cancellable cancellable;
     private final HashMap <ActorRef,Cancellable> map = new HashMap<>();
     private boolean crashed = false;
-
 
     // a buffer storing all received chat messages
     private StringBuffer chatHistory = new StringBuffer();
@@ -155,7 +154,7 @@ class Chatter extends AbstractActor {
             return;
 
         if (type == 0) {
-            getContext().system().scheduler().scheduleOnce(Duration.create(3, TimeUnit.SECONDS), getSelf(), new TimerMsg(),
+            getContext().system().scheduler().scheduleOnce(Duration.create(getRandomNumberInRange(3000, 6000), TimeUnit.MILLISECONDS), getSelf(), new TimerMsg(),
                     getContext().system().dispatcher(), null);
             if (inhibit_sends == 0)
                 sendCount++;
@@ -179,13 +178,14 @@ class Chatter extends AbstractActor {
     }
 
     private boolean multicast(Serializable m, Groups groups) { // our multicast implementation
-
         int message_sent = 0;
         List<ActorRef> shuffledGroup = new ArrayList<>(groups.group);
         Collections.shuffle(shuffledGroup);
         for (ActorRef p : shuffledGroup) {
             if (!p.equals(getSelf())) { // not sending to self
                 p.tell(m, getSelf());
+//                if (this.id == 2)
+//                    getSelf().tell(new Crash(), getSelf());
                 message_sent++;
                 try {
                     Thread.sleep(rnd.nextInt(10));
@@ -303,7 +303,7 @@ class Chatter extends AbstractActor {
         flush(vm.groups.viewId);
 
         //System.out.println("listId size: " + groups.get(groups.size() - 1).listId.size());
-        if (groups.get(groups.size() - 1).listId.get(groups.get(groups.size() - 1).listId.size() - 1) == this.id)
+        if (groups.get(groups.size() - 1).listId.get(groups.get(groups.size() - 1).listId.size() - 1) == this.id && this.viewId == 0)
             getSelf().tell(new StartChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount)), getSelf());
     }
 
@@ -504,27 +504,36 @@ class Chatter extends AbstractActor {
     }
 
     private void appendToHistory(ChatMsg m) {
-        chatHistory.append("send multicast " + m.id + " within " + this.viewId + " " + "\n");
+        chatHistory.append(this.id + " send multicast " + m.id + " within " + this.viewId + " " + "\n");
     }
 
     private void appendToHistoryDeliver(ChatMsg chatMsg) {
-        chatHistory.append("deliver multicast " + chatMsg.id + " from " + chatMsg.senderId + " within " + this.viewId + "\n");
+        chatHistory.append(this.id + " deliver multicast " + chatMsg.id + " from " + chatMsg.senderId + " within " + this.viewId + "\n");
     }
 
     private void appendToHistory(FlushMsg m) {
         //System.out.println("Io sono: " + this.id + ", sono in appendtohistory, il mio inhibit_sends è: " + inhibit_sends + ", sono nella vista: " + this.viewId + " e la mia listID è: " + this.listId);
-        chatHistory.append("install view " + m.viewId + " " + display() + "\n");
+        chatHistory.append(this.id + " install view " + m.viewId + " " + display() + "\n");
     }
 
     private void printHistory(PrintHistoryMsg msg) {
-        System.out.printf("%02d: %s\n", this.id, chatHistory);
+        try {
+            CausalMulticast.bufferedWriter.write(chatHistory.toString());
+            CausalMulticast.bufferedWriter.newLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.printf("%s\n", chatHistory);
     }
 
     private String display() {
+        int index = findIndexViewId(this.viewId);
         String s = "";
-        for (int i = 0; i < this.listId.size(); i++) {
-            s += this.listId.get(i).toString();
-            if (i < this.listId.size() - 1)
+        for (int i = 0; i < this.groups.get(index).listId.size(); i++) {
+            s += this.groups.get(index).listId.get(i).toString();
+            if (i < this.groups.get(index).listId.size() -1)
                 s += ", ";
         }
         return s;
@@ -535,6 +544,16 @@ class Chatter extends AbstractActor {
     public void onCrash(Crash crashMessage) {
         crashed = true;
         System.out.println("CRASH!!!");
+    }
+
+    private static int getRandomNumberInRange(int min, int max) {
+
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
     }
 
     private void displayGroup() {

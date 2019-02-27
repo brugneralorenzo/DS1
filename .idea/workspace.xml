@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8ccf626-5a51-4a84-885f-442657d0a6be" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" afterDir="false" />
     </list>
@@ -23,23 +22,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CausalMulticast.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CausalMulticast.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="53" column="51" selection-start-line="53" selection-start-column="51" selection-end-line="53" selection-end-column="51" />
+            <state relative-caret-position="173">
+              <caret line="70" column="76" selection-start-line="70" selection-start-column="76" selection-end-line="70" selection-end-column="76" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Chatter.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Chatter.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="455" column="12" lean-forward="true" selection-start-line="455" selection-start-column="12" selection-end-line="455" selection-end-column="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="157">
+              <caret line="527" column="27" selection-start-line="527" selection-start-column="27" selection-end-line="527" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -48,12 +44,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>joining</find>
-      <find>onRequestJoin</find>
-      <find>++</find>
-      <find>vista alla</find>
-      <find>groups.add</find>
-      <find>groups</find>
       <find>stable</find>
       <find>joingr</find>
       <find>group</find>
@@ -78,6 +68,12 @@
       <find>cancella</find>
       <find>crash</find>
       <find>onCra</find>
+      <find>RANDOM</find>
+      <find>Rd</find>
+      <find>multica</find>
+      <find>install</find>
+      <find>insta</find>
+      <find>install</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -414,8 +410,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" />
         <option value="$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java" />
       </list>
     </option>
   </component>
@@ -578,12 +574,12 @@
       <workItem from="1551107256246" duration="4659000" />
       <workItem from="1551133267961" duration="8733000" />
       <workItem from="1551269227885" duration="37000" />
-      <workItem from="1551274345678" duration="876000" />
+      <workItem from="1551274345678" duration="5943000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53767000" />
+    <option name="totallyTimeSpent" value="58834000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -596,6 +592,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1389" height="877" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32947233" />
@@ -606,15 +603,15 @@
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5002716" side_tool="true" weight="0.44973546" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4997284" visible="true" weight="0.3551282" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4997284" visible="true" weight="0.31410256" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32991013" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32991013" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48906562" visible="true" weight="0.12991834" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48971963" visible="true" weight="0.12991834" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="Gradle" order="3" />
-      <window_info id="Structure" order="1" sideWeight="0.5109344" side_tool="true" visible="true" weight="0.12991834" />
+      <window_info id="Structure" order="1" sideWeight="0.5102804" side_tool="true" visible="true" weight="0.12991834" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
@@ -652,9 +649,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6240">
           <caret line="416" column="5" selection-start-line="416" selection-start-column="5" selection-end-line="416" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -669,9 +663,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5655">
           <caret line="377" column="19" selection-start-line="377" selection-start-column="19" selection-end-line="377" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -686,9 +677,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2142">
           <caret line="119" lean-forward="true" selection-start-line="119" selection-end-line="119" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -703,9 +691,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4035">
           <caret line="269" column="21" selection-start-line="269" selection-start-column="21" selection-end-line="269" selection-end-column="21" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -720,9 +705,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7002">
           <caret line="389" column="51" lean-forward="true" selection-start-line="389" selection-start-column="51" selection-end-line="389" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -737,9 +719,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4086">
           <caret line="227" lean-forward="true" selection-start-line="227" selection-end-line="227" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -754,9 +733,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2730">
           <caret line="199" column="27" lean-forward="true" selection-start-line="199" selection-start-column="27" selection-end-line="199" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -767,20 +743,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="53" column="51" selection-start-line="53" selection-start-column="51" selection-end-line="53" selection-end-column="51" />
+        <state relative-caret-position="157">
+          <caret line="527" column="27" selection-start-line="527" selection-start-column="27" selection-end-line="527" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/Chatter.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/it/unitn/ds1/CausalMulticast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="455" column="12" lean-forward="true" selection-start-line="455" selection-start-column="12" selection-end-line="455" selection-end-column="33" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="173">
+          <caret line="70" column="76" selection-start-line="70" selection-start-column="76" selection-end-line="70" selection-end-column="76" />
         </state>
       </provider>
     </entry>
