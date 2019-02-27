@@ -35,6 +35,7 @@ class Chatter extends AbstractActor {
     private Cancellable cancellable;
     private final HashMap <ActorRef,Cancellable> map = new HashMap<>();
     private boolean crashed = false;
+    private boolean hasToCrash = false;
 
     // a buffer storing all received chat messages
     private StringBuffer chatHistory = new StringBuffer();
@@ -145,7 +146,13 @@ class Chatter extends AbstractActor {
 
     public static class Beacon implements Serializable{}
 
-    public static class Crash implements  Serializable{}
+    public static class Crash implements  Serializable{
+        private final boolean crashedDuringMulticast;
+
+        public Crash(boolean crashedDuringMulticast){
+            this.crashedDuringMulticast = crashedDuringMulticast;
+        }
+    }
 
 
     /* -- Actor behaviour ----------------------------------------------------- */
@@ -162,12 +169,25 @@ class Chatter extends AbstractActor {
         if (inhibit_sends == 0) {
             ChatMsg m = new ChatMsg(id, this.id, this.viewId, type, stable);
             int index = findIndexViewId(this.viewId);
-            boolean result = multicast(m, groups.get(index));
-            if (result && type == 0) {
-                stableMsg(id);
-                appendToHistory(m); // append the sent message
-            } else {
+            if (hasToCrash)
+                multicastAndCrash(m, groups.get(index));
+            else {
+                boolean result = multicast(m, groups.get(index));
+                if (result && type == 0) {
+                    stableMsg(id);
+                    appendToHistory(m); // append the sent message
+                }
+            }
+        }
+    }
 
+    private void multicastAndCrash(Serializable m, Groups groups) {
+        List<ActorRef> shuffledGroup = new ArrayList<>(groups.group);
+        Collections.shuffle(shuffledGroup);
+        for (ActorRef p : shuffledGroup) {
+            if (!p.equals(getSelf())) { // not sending to self
+                p.tell(m, getSelf());
+                crashed = true;
             }
         }
     }
@@ -184,8 +204,6 @@ class Chatter extends AbstractActor {
         for (ActorRef p : shuffledGroup) {
             if (!p.equals(getSelf())) { // not sending to self
                 p.tell(m, getSelf());
-//                if (this.id == 2)
-//                    getSelf().tell(new Crash(), getSelf());
                 message_sent++;
                 try {
                     Thread.sleep(rnd.nextInt(10));
@@ -542,8 +560,14 @@ class Chatter extends AbstractActor {
 
     // emulate a crash
     public void onCrash(Crash crashMessage) {
-        crashed = true;
-        System.out.println("CRASH!!!");
+        if (crashMessage.crashedDuringMulticast) {
+            hasToCrash = true;
+            System.out.println("CRASHED DURING MULTICAST!!!");
+        }
+        else{
+            crashed = true;
+            System.out.println("CRASHED!!!");
+        }
     }
 
     private static int getRandomNumberInRange(int min, int max) {

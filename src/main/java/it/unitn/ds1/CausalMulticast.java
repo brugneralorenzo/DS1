@@ -53,11 +53,11 @@ public class CausalMulticast {
         Thread.sleep(7000);
         group.get(0).tell(new Chatter.RequestJoin(), b);
         Thread.sleep(8000);
-        group.get(1).tell(new  Chatter.Crash(), a);
+//        group.get(1).tell(new Chatter.Crash(true), a);
 //        Thread.sleep(8000);
-//        group.get(0).tell(new Chatter.RequestJoin(), c);
-//        Thread.sleep(5000);
-//        group.get(2).tell(new  Chatter.Crash(), b);
+        group.get(0).tell(new Chatter.RequestJoin(), c);
+//        Thread.sleep(7000);
+//        group.get(2).tell(new  Chatter.Crash(true), b);
 
 
 
