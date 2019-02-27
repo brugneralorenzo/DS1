@@ -31,7 +31,7 @@ class Chatter extends AbstractActor {
     private List<ActorRef> intersectionListId = new ArrayList<>();
     private final List<ActorRef> receivedFlush = new ArrayList<>();
     private final static int BEACON_INTERVAL = 5000;
-    private final static int MANAGER_TIMEOUT = 1000000;
+    private final static int MANAGER_TIMEOUT = 10000;
     private Cancellable cancellable;
     private final HashMap <ActorRef,Cancellable> map = new HashMap<>();
     private boolean crashed = false;
@@ -146,6 +146,8 @@ class Chatter extends AbstractActor {
 
     public static class Beacon implements Serializable{}
 
+    public static class Crash implements  Serializable{}
+
 
     /* -- Actor behaviour ----------------------------------------------------- */
     private void sendChatMsg(String id, int type, String stable) {
@@ -211,6 +213,7 @@ class Chatter extends AbstractActor {
                 .match(FlushMsg.class, this::onFlush)
                 .match(Timeout.class, this::onTimeout)
                 .match(Beacon.class, this::onBeacon)
+                .match(Crash.class, this::onCrash)
                 .build();
     }
 
@@ -411,6 +414,7 @@ class Chatter extends AbstractActor {
             lastViewToBeInstalled++;
 
             this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
+            viewChange();
             System.out.println("Io sono "+this.id +", Someone is dead: " + timeoutMessage.actorRef);
 
         }
@@ -528,7 +532,7 @@ class Chatter extends AbstractActor {
 
 
     // emulate a crash
-    private void crash(int recoverIn) {
+    public void onCrash(Crash crashMessage) {
         crashed = true;
         System.out.println("CRASH!!!");
     }
