@@ -33,7 +33,7 @@ class Chatter extends AbstractActor {
     private final static int BEACON_INTERVAL = 5000;
     private final static int MANAGER_TIMEOUT = 10000;
     private Cancellable cancellable;
-    private final HashMap <ActorRef,Cancellable> map = new HashMap<>();
+    private final HashMap<ActorRef, Cancellable> map = new HashMap<>();
     private boolean crashed = false;
     private boolean hasToCrash = false;
 
@@ -71,7 +71,7 @@ class Chatter extends AbstractActor {
     public static class StartChatMsg implements Serializable {
         private final String messageString;
 
-        public StartChatMsg(String messageString){
+        public StartChatMsg(String messageString) {
             this.messageString = messageString;
         }
     }
@@ -89,10 +89,12 @@ class Chatter extends AbstractActor {
 
     public static class Timeout implements Serializable {
         private final ActorRef actorRef;
-        public Timeout (ActorRef actorRef){ //use it for manager
+
+        public Timeout(ActorRef actorRef) { //use it for manager
             this.actorRef = actorRef;
         }
-        public Timeout(){ //use it for partecipants
+
+        public Timeout() { //use it for partecipants
             this.actorRef = null;
         }
     }
@@ -144,12 +146,13 @@ class Chatter extends AbstractActor {
         }
     }
 
-    public static class Beacon implements Serializable{}
+    public static class Beacon implements Serializable {
+    }
 
-    public static class Crash implements  Serializable{
+    public static class Crash implements Serializable {
         private final boolean crashedDuringMulticast;
 
-        public Crash(boolean crashedDuringMulticast){
+        public Crash(boolean crashedDuringMulticast) {
             this.crashedDuringMulticast = crashedDuringMulticast;
         }
     }
@@ -188,6 +191,7 @@ class Chatter extends AbstractActor {
             if (!p.equals(getSelf())) { // not sending to self
                 p.tell(m, getSelf());
                 crashed = true;
+                return;
             }
         }
     }
@@ -236,8 +240,8 @@ class Chatter extends AbstractActor {
     }
 
     private void onBeacon(Beacon beaconMessage) {
-        System.out.println("Io sono "+ this.id + ", ricevo beacon da "+getSender());
-        if(map.containsKey(getSender())){
+        System.out.println("Io sono " + this.id + ", ricevo beacon da " + getSender());
+        if (map.containsKey(getSender())) {
             Cancellable cancellable = map.get(getSender());
             cancellable.cancel();
 
@@ -254,8 +258,8 @@ class Chatter extends AbstractActor {
 
         int newId = 0;
         int max = 0;
-        for(int i = 0; i < groups.size(); i++){
-            if(Collections.max(groups.get(i).listId) > max)
+        for (int i = 0; i < groups.size(); i++) {
+            if (Collections.max(groups.get(i).listId) > max)
                 max = Collections.max(groups.get(i).listId);  // take the highest ID ever been in the system
         }
         newId = max + 1;
@@ -273,7 +277,7 @@ class Chatter extends AbstractActor {
         CausalMulticast.addToGroup(getSender());
         viewChange();
 
-        setTimeout(MANAGER_TIMEOUT,getSender());
+        setTimeout(MANAGER_TIMEOUT, getSender());
         if ((groups.get(groups.size() - 1).group).size() == 2) {
             sendChatMsg(String.valueOf(this.id) + "-" + String.valueOf(sendCount), 0, "-1");
         }
@@ -284,8 +288,8 @@ class Chatter extends AbstractActor {
             return;
 
         sendChatMsg(msg.messageString, 0, "-1");
-        System.out.println("io sono "+this.id + ", setto timeout beacon");
-        setTimeout(BEACON_INTERVAL,null);
+        System.out.println("io sono " + this.id + ", setto timeout beacon");
+        setTimeout(BEACON_INTERVAL, null);
     }
 
     private void onJoinGroupMsg(JoinGroupMsg msg) {
@@ -298,7 +302,7 @@ class Chatter extends AbstractActor {
     }
 
     /*
-    * Manager sends the viewChange message to everyone in the group and updates itself view
+     * Manager sends the viewChange message to everyone in the group and updates itself view
      */
     private void viewChange() {
         ViewMessage msg = new ViewMessage(this.groups.get(groups.size() - 1));
@@ -339,13 +343,13 @@ class Chatter extends AbstractActor {
                     m.type = 2;
                     a.tell(m, getSelf());
                     try {
-                        Thread.sleep(rnd.nextInt(20));
+                        Thread.sleep(getRandomNumberInRange(5, 20));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    I.remove();
                 }
             }
+            I.remove();
         }
 
         iterator = groups.get(groups.size() - 1).group.iterator(); // send a flush message to every actor in the most recent view
@@ -389,7 +393,7 @@ class Chatter extends AbstractActor {
                 deleteOldMsg();
                 receivedFlush.clear();
             }
-        } else{
+        } else {
             receivedFlush.add(getSender());
         }
     }
@@ -397,7 +401,7 @@ class Chatter extends AbstractActor {
     private void setTimeout(int time, ActorRef actorRef) {
         if (crashed)
             return;
-        if(actorRef == null)
+        if (actorRef == null)
             getContext().system().scheduler().scheduleOnce(
                     Duration.create(time, TimeUnit.MILLISECONDS),
                     getSelf(),
@@ -409,7 +413,7 @@ class Chatter extends AbstractActor {
                     getSelf(),
                     new Timeout(actorRef),
                     getContext().system().dispatcher(), getSelf());
-            map.put(actorRef,cancellable);
+            map.put(actorRef, cancellable);
         }
 
     }
@@ -417,11 +421,11 @@ class Chatter extends AbstractActor {
     private void onTimeout(Timeout timeoutMessage) {
         if (crashed)
             return;
-        if (this.id != 0){
+        if (this.id != 0) {
             ActorRef manager = this.groups.get(findIndexViewId(this.viewId)).group.get(0);
             manager.tell(new Beacon(), getSelf());
             setTimeout(BEACON_INTERVAL, null);
-        }else{
+        } else {
             List<Integer> tmp = new ArrayList<>(groups.get(groups.size() - 1).listId);
             List<ActorRef> tmp1 = new ArrayList<>(groups.get(groups.size() - 1).group);
 
@@ -433,7 +437,7 @@ class Chatter extends AbstractActor {
 
             this.groups.add(new Groups(lastViewToBeInstalled, tmp, tmp1));
             viewChange();
-            System.out.println("Io sono "+this.id +", Someone is dead: " + timeoutMessage.actorRef);
+            System.out.println("Io sono " + this.id + ", Someone is dead: " + timeoutMessage.actorRef);
 
         }
     }
@@ -482,8 +486,7 @@ class Chatter extends AbstractActor {
                 deliver(msg);
             } else if (msg.viewId > this.viewId)
                 this.mq.add(msg);
-        }
-        else{
+        } else {
             System.out.println("qualcosa di strano OOO");
         }
     }
@@ -551,7 +554,7 @@ class Chatter extends AbstractActor {
         String s = "";
         for (int i = 0; i < this.groups.get(index).listId.size(); i++) {
             s += this.groups.get(index).listId.get(i).toString();
-            if (i < this.groups.get(index).listId.size() -1)
+            if (i < this.groups.get(index).listId.size() - 1)
                 s += ", ";
         }
         return s;
@@ -563,8 +566,7 @@ class Chatter extends AbstractActor {
         if (crashMessage.crashedDuringMulticast) {
             hasToCrash = true;
             System.out.println("CRASHED DURING MULTICAST!!!");
-        }
-        else{
+        } else {
             crashed = true;
             System.out.println("CRASHED!!!");
         }
