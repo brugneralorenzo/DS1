@@ -25,9 +25,6 @@ public class CausalMulticast {
         group.add(actorRef);
     }
     public static void main(String[] args) throws InterruptedException, IOException {
-        // Create the 'helloakka' actor system
-
-
 
         int id = 0;
 
@@ -38,33 +35,38 @@ public class CausalMulticast {
         ActorRef c = system.actorOf(Chatter.props(-3), "Participants3");
 
 
-        // send the group member list to everyone in the group
-        JoinGroupMsg join = new JoinGroupMsg(0, new Chatter.Groups(0, new ArrayList<Integer>() {{
-            add(0);
-        }}, group));
-        for (ActorRef peer : group) {
-            peer.tell(join, null);
-        }
 
-
-        // tell the first chatter to start conversation
-
-        group.get(0).tell(new Chatter.RequestJoin(), a);
-        Thread.sleep(7000);
-        group.get(0).tell(new Chatter.RequestJoin(), b);
-        Thread.sleep(8000);
-//        group.get(1).tell(new Chatter.Crash(true), a);
-//        Thread.sleep(8000);
-        group.get(0).tell(new Chatter.RequestJoin(), c);
-       Thread.sleep(7000);
-       group.get(2).tell(new  Chatter.Crash(true), b);
 
 
 
 
 
         try {
-            System.out.println(">>> Wait for the chats to stop and press ENTER <<<");
+            System.out.println(">>> Press ENTER to start the program <<<");
+            System.in.read();
+
+            // send the group member list to everyone in the group
+            JoinGroupMsg join = new JoinGroupMsg(0, new Chatter.Groups(0, new ArrayList<Integer>() {{
+                add(0);
+            }}, group));
+            for (ActorRef peer : group) {
+                peer.tell(join, null);
+            }
+
+
+            // tell the first chatter to start conversation
+
+            group.get(0).tell(new Chatter.RequestJoin(), a);
+            Thread.sleep(7000);
+            group.get(0).tell(new Chatter.RequestJoin(), b);
+            Thread.sleep(8000);
+//        group.get(1).tell(new Chatter.Crash(true), a);
+//        Thread.sleep(8000);
+            group.get(0).tell(new Chatter.RequestJoin(), c);
+            Thread.sleep(7000);
+            group.get(2).tell(new  Chatter.Crash(true), b);
+
+            System.out.println(">>> Press ENTER to write the log file <<<");
             System.in.read();
 
             outputStream = new FileOutputStream("output.txt");
@@ -75,10 +77,12 @@ public class CausalMulticast {
             for (ActorRef peer : group) {
                 peer.tell(msg, null);
             }
+
             System.out.println(">>> Press ENTER to exit <<<");
             System.in.read();
         } catch (IOException ioe) {
         }
+        Thread.sleep(2000);
         bufferedWriter.close();
         system.terminate();
     }
