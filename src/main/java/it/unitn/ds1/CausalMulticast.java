@@ -28,18 +28,11 @@ public class CausalMulticast {
 
         int id = 0;
 
-        // the first four peers will be participating in conversations
         group.add(system.actorOf(Chatter.props(id), "Manager"));
         ActorRef a = system.actorOf(Chatter.props(-1), "Participants1");
         ActorRef b = system.actorOf(Chatter.props(-2), "Participants2");
         ActorRef c = system.actorOf(Chatter.props(-3), "Participants3");
-
-
-
-
-
-
-
+        ActorRef d = system.actorOf(Chatter.props(-4), "Participants4");
 
         try {
             System.out.println(">>> Press ENTER to start the program <<<");
@@ -53,20 +46,18 @@ public class CausalMulticast {
                 peer.tell(join, null);
             }
 
-
-            // tell the first chatter to start conversation
-
             group.get(0).tell(new Chatter.RequestJoin(), a);
-            Thread.sleep(7000);
+            Thread.sleep(10000);
             group.get(0).tell(new Chatter.RequestJoin(), b);
-            Thread.sleep(8000);
-//        group.get(1).tell(new Chatter.Crash(true), a);
-//        Thread.sleep(8000);
+            Thread.sleep(18000);
+            group.get(2).tell(new  Chatter.Crash(false), b);
+            Thread.sleep(15000);
             group.get(0).tell(new Chatter.RequestJoin(), c);
-            Thread.sleep(7000);
-            group.get(2).tell(new  Chatter.Crash(true), b);
+            Thread.sleep(15000);
+            group.get(1).tell(new Chatter.Crash(true), a);
+            Thread.sleep(20000);
+            group.get(0).tell(new Chatter.RequestJoin(), d);
 
-            System.out.println(">>> Press ENTER to write the log file <<<");
             System.in.read();
 
             outputStream = new FileOutputStream("output.txt");

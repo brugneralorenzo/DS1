@@ -137,7 +137,8 @@ class Chatter extends AbstractActor {
     /*
         A message requesting to print the chat history
     */
-    public static class PrintHistoryMsg implements Serializable { }
+    public static class PrintHistoryMsg implements Serializable {
+    }
 
     public static class TimerMsg implements Serializable {
         public TimerMsg() {
@@ -152,7 +153,8 @@ class Chatter extends AbstractActor {
         }
     }
 
-    public static class Beacon implements Serializable { }
+    public static class Beacon implements Serializable {
+    }
 
     public static class Crash implements Serializable {
         private final boolean crashedDuringMulticast;
@@ -506,7 +508,8 @@ class Chatter extends AbstractActor {
 
         if (msg.type == 1) {  // stable message
             final ChatMsg deliverable = findDeliverable(msg);
-            deliver(deliverable);
+            if (deliverable != null)
+                deliver(deliverable);
         } else if (msg.type == 0) {  // normal message
             if ((msg.viewId > this.viewId) || (msg.viewId == this.viewId && !findDuplicate(msg))) {
                 this.mq.add(msg); // cannot deliver m right now, putting it on hold
