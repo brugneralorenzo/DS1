@@ -158,7 +158,15 @@ group members are allowed to install the new view. \\
 In order to exchange messages, a peer has to have installed the most 
 recent view. Very simply, in the code this is shown by its
 \texttt{inhibit\_sends} field, which has to be zero in order to allow 
-the exchange. 
+the exchange. \\
+Another important scenario to be described is the silent crash detection
+mechanics. The implementation occurs through a simple beacon mechanism:
+every five seconds each peer has to send a beacon to the manager, 
+indicating that that specific peer is still alive. Since the channel 
+is reliable, as soon as the manager does not receive a beacon from 
+a participant, the group manager receives a \texttt{TimeoutMsg}
+indicating that a peer is crashed. Afterwords, it instantiate a new
+view without the crashed node and instantiates a view change. 
 
 
 \begin{comment}
