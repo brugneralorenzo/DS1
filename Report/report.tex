@@ -156,17 +156,23 @@ group members are allowed to install the new view. \\
 	\label{fig:NewView}%
 \end{figure}
 In order to exchange messages, a peer has to have installed the most 
-recent view. Very simply, in the code this is shown by its
+recent view. Simply, in the code this is shown by the
 \texttt{inhibit\_sends} field, which has to be zero in order to allow 
-the exchange. \\
+the exchange of messages. \\
 Another important scenario to be described is the silent crash detection
-mechanics. The implementation occurs through a simple beacon mechanism:
+mechanics. The implementation takes place through a simple beacon mechanism:
 every five seconds each peer has to send a beacon to the manager, 
-indicating that that specific peer is still alive. Since the channel 
-is reliable, as soon as the manager does not receive a beacon from 
+indicating that specific peer is still alive. Since the channel 
+is reliable, as soon as the manager does not receive even a single beacon from 
 a participant, the group manager receives a \texttt{TimeoutMsg}
-indicating that a peer is crashed. Afterwords, it instantiate a new
-view without the crashed node and instantiates a view change. 
+indicating that a silent crash occured. In particular, he is able to understand
+which peer crashed, thanks to a dedicated data HashMap where the pair key-value
+is represented by the peer and a \texttt{Cancellable} object. The latter object 
+is used to update the time in which the that specific peer sent the beacon.
+Afterwords, the manager instantiates a new view without the crashed node.\\
+Moreover, there are some supporting functions used to simplify the overall
+application. 
+
 
 
 \begin{comment}
@@ -178,29 +184,20 @@ view without the crashed node and instantiates a view change.
 \end{itemize}
 \end{comment}
 
-
-\section{Evaluation}
-
-\begin{comment}
-	\begin{itemize}
-\item measurement setup: simulation parameters, repetitions, \dots
-\item results: use plots to show the outcome of your work
-\item evaluation / discussion: what do the results tell you? What can you infer from them?
-\end{itemize}
-\end{comment}
-
-
 \section{Conclusion}
+This project suggests a simple implementation of a distributed application
+according to the protocol. Everything works properly ad the overall system
+is very easily tesatble. 
 
 \begin{comment}
 	\begin{itemize}
 \item summarize again what your work did, but now emphasize more the results
 \item write conclusions that can be drawn from the results found and the discussion presented in the work
 \end{itemize}
+Again for very short documents the conclusions can be embedded with the last section, but this depends on the structure you give to your document. 
 
 \end{comment}
 
-Again for very short documents the conclusions can be embedded with the last section, but this depends on the structure you give to your document. 
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
