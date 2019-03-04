@@ -52,9 +52,9 @@
 \maketitle
 
 \begin{abstract}
-The project consists of developing a system using Akka. The actors
+The project consists of developing an application using Akka \cite{Akka}. The actors
 taking part in the system are called Akka actors and they are able
-to exchange of messages between each other under some conditions.
+to exchange messages between each other under some conditions/restrictions.
 Each peer is both able to send and deliver multicast messages and 
 the overall system is fault tolerant in case of silent crash from
 a group member.   
@@ -69,19 +69,19 @@ The abstract is normally present in long reports, if your report is 1--3 pages y
 \label{sec:introduction}
 The project aims at showing a simple message exchange mechanism between
 peers belonging to the same group. The actors taking part in the group
-can be of two types:
+are of two types:
 \begin{itemize}
 	\item \textbf{Manager}
 	\item \textbf{Partecipant}
 \end{itemize} 
-The group manager is reliable, responsible for serializing group view
+There is olny one group manager and it is reliable, responsible for serializing group view
 changes and sending view updates to all the participants. 
 Furthermore, it is also able to detect silent crashes and initiate view
 changes to notify the other members that the group has changed.\\
 The exchange of messages is governed by the \texttt{Virtual Synchrony}
 protocol, which ensures first that the communication between actors is
 consistent and secondly that the system is fault tolerant in case of
-silent crash of one or more actors taking part in the message exchange.
+silent crash of one or more actors taking part in the group.
 
 
 \begin{comment}
@@ -113,7 +113,8 @@ The overall system has been developed in Akka. Akka provides a higher
 level of abstraction for writing concurrent and distributed systems. \\
 The code is structured in two java classes:
 \begin{itemize}
-	\item \textbf{CausalMulticast.java}, which represents the main 
+	\item \textbf{CausalMulticast.java}, which represents the main of 
+	the application 
 	\item \textbf{Chatter.java}, which represents all the logic behind
 	the system
 \end{itemize}
@@ -122,11 +123,11 @@ structure according to the needed information to spread around.
 All the message types are implemented by \texttt{public static classes}
 implementing the \texttt{Serializable} interface.\\
 To maintain information about the view and all the actors taking part
-in that specific view, we defined a data structure called \texttt{Groups}.
-Every Groups instance is composed by the view, IDs and the list of the
+in that specific view, we have defined a data structure called \texttt{Groups}.
+Every Groups instance is composed by the view ID, IDs and the list of the
 actors partecipating to that view. \\
 In order to better understand the functioning of the system, the 
-following flow graphs give the main idea. \\
+following flow graphs contribute to give the general idea. \\
 \begin{figure}[ht]%
 	\centering
 	\subfloat{\includegraphics[width=\columnwidth]{figures/joinRequest.png}}\\%
@@ -142,12 +143,15 @@ The Figure \ref{fig:NewView} shows the flow of execution to instantiate a new vi
 Whenever a new join request or a silent crash occurs, the manager
 receives respectively either a RequestJoinMsg or a TimeoutMsg.
 Afterwords, it instantiates the view change process and,
-eventually, all the peers receives the message and execute the flush
-protocol. This protocol is needed to make all the participants aware
-that they have received all unstable messages from all the members
-in the group.
-Only after having received the flush message from all the peers, the 
-group members are allowed to install the new view. \\
+eventually, all the operational peers receives the message and execute
+the flush protocol. This protocol is needed to make all the participants
+aware that they have received all unstable messages from all the 
+members in the group: every operational peer first sends all the 
+unstable messages it owns in the queue to make them stable and second, 
+multicasts a \texttt{FlushMsg} object indicating that they have 
+completed the flush protocol. 
+Only after having received the flush message from all the peers, a 
+group member is allowed to install the new view. \\
 \begin{figure}[ht]%
 	\centering
 	\subfloat{\includegraphics[width=\columnwidth]{figures/NewView.png}}\\%
@@ -156,19 +160,23 @@ group members are allowed to install the new view. \\
 	\label{fig:NewView}%
 \end{figure}
 In order to exchange messages, a peer has to have installed the most 
-recent view. Simply, in the code this is shown by the
+recent view. Simply, in the code this mechanism is handled by the
 \texttt{inhibit\_sends} field, which has to be zero in order to allow 
-the exchange of messages. \\
-Another important scenario to be described is the silent crash detection
-mechanics. The implementation takes place through a simple beacon mechanism:
-every five seconds each peer has to send a beacon to the manager, 
-indicating that specific peer is still alive. Since the channel 
-is reliable, as soon as the manager does not receive even a single beacon from 
-a participant, the group manager receives a \texttt{TimeoutMsg}
-indicating that a silent crash occured. In particular, he is able to understand
-which peer crashed, thanks to a dedicated data HashMap where the pair key-value
-is represented by the peer and a \texttt{Cancellable} object. The latter object 
-is used to update the time in which the that specific peer sent the beacon.
+the exchange of messages. Every time a view change has been instantiated
+the counter is incremented by one; on the other way round, each time 
+a new view is installed, the counter is decremented. \\
+Another important scenario to be described is the silent crash detection. 
+The implementation takes place through a simple beacon mechanism:
+every five seconds each peer has to send a message (beacon) to the 
+manager, indicating that specific peer is still alive. 
+Since the channel is reliable, as soon as the manager does not receive 
+even a single beacon from a participant, the group manager receives a
+\texttt{TimeoutMsg} indicating that a silent crash occured. 
+In particular, he is able to understand which peer crashed, thanks to 
+a dedicated HashMap where the pair key-value
+is represented by the peer and a \texttt{Cancellable} object. The
+latter object is used to update the time in which that specific 
+peer sent the beacon.
 Afterwords, the manager instantiates a new view without the crashed node.\\
 Moreover, there are some supporting functions used to simplify the overall
 application. 
@@ -268,16 +276,5 @@ Example: The formula in \cref{eq:newton-second} is known as Newton's second law 
 %\end{lstlisting}
 
 \subsection{References}
-
-If you want to cite something proved in another work, use citations.
-Search for the \texttt{bibtex} entry of the article you want to cite on \textit{ieeexplore} or \textit{google scholar}.
-Put your \texttt{bibtex} code into \texttt{references.bib} and cite them using the \verb|\cite| command.
-For example: According to \cite{akyildiz2002survey}, $1 + 1 = 2$.
-The entries you cite will \textbf{automatically} appear in your references.
-
-When citing more than a few pages worth of text, point the reader to the specific part you are referring to in your citation, like so:~\cite[Table IV]{dietrich2009lifetime}.
-
-Do not cite URLs. For pointing a reader to interesting websites, use footnotes.
-
 
 \end{document}
