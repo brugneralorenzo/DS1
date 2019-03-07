@@ -48,6 +48,8 @@ public class CausalMulticast {
 
             group.get(0).tell(new Chatter.RequestJoin(), a);
             Thread.sleep(10000);
+            /*group.get(0).tell(new Chatter.RequestJoin(), a);
+            Thread.sleep(10000);*/
             group.get(0).tell(new Chatter.RequestJoin(), b);
             Thread.sleep(18000);
             group.get(2).tell(new  Chatter.Crash(false), b);
@@ -71,10 +73,10 @@ public class CausalMulticast {
 
             System.out.println(">>> Press ENTER to exit <<<");
             System.in.read();
+            Thread.sleep(2000);
+            bufferedWriter.close();
         } catch (IOException ioe) {
         }
-        Thread.sleep(2000);
-        bufferedWriter.close();
         system.terminate();
     }
 }

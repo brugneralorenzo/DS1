@@ -281,7 +281,11 @@ class Chatter extends AbstractActor {
     /*
         Manager receives the request to join a node to the group
      */
-    private synchronized void onRequestJoin(RequestJoin rj) {
+    private synchronized void onRequestJoin(RequestJoin rj) throws Exception {
+        int current = findIndexViewId(this.viewId);
+        if (groups.get(current).group.contains(getSender())){
+            throw new Exception("Peer already in the group");
+        }
         lastViewToBeInstalled++;
         int newId;
         int max = 0;

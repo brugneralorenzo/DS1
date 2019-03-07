@@ -2,43 +2,15 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{silence}\WarningsOff[latexfont]
-
 \usepackage{amsmath}
-
-\RequirePackage{tikz}[2010/10/13]
-\usetikzlibrary{arrows,automata,calc,intersections,patterns,decorations.pathmorphing,decorations.pathreplacing}
-
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{url}
 \usepackage[caption=false,font=footnotesize]{subfig}
-\usepackage[binary-units,per-mode=symbol]{siunitx}
-\sisetup{list-final-separator = {, and }}
-\usepackage{booktabs}
-\usepackage{pifont}
-\usepackage{microtype}
-\usepackage{textcomp}
-\usepackage[american]{babel}
-\usepackage[noabbrev,capitalise]{cleveref}
 \usepackage{xspace}
-\usepackage{hyphenat}
 \usepackage[draft,inline,nomargin,index]{fixme}
 \fxsetup{theme=color}
-\usepackage{grffile}
-\usepackage{xfrac}
-\usepackage{multirow}
-\RequirePackage{xstring}
-\RequirePackage{xparse}
-\RequirePackage[index=true]{acro}
-\NewDocumentCommand\acrodef{mO{#1}mG{}}{\DeclareAcronym{#1}{short={#2}, long={#3}, #4}}
-\NewDocumentCommand\acused{m}{\acuse{#1}}
-\usepackage{upquote}
 \usepackage{comment}
-
-\acrodef{WSN}{Wireless Sensor Network}
-\acrodef{MANET}{Mobile Ad Hoc Network}
-\acrodef{ROI}{Region of Interest}{short-indefinite={an}, long-plural-form={Regions of Interest}}
 
 \begin{document}
 
@@ -52,11 +24,11 @@
 \maketitle
 
 \begin{abstract}
-The project consists of developing an application using Akka \cite{Akka}. The actors
+The project consists of developing a distributed application using Akka \cite{Akka}. The actors
 taking part in the system are called Akka actors and they are able
 to exchange messages between each other under some conditions/restrictions.
 Each peer is both able to send and deliver multicast messages and 
-the overall system is fault tolerant in case of silent crash from
+the overall system is fault tolerant in case of silent crash of
 a group member.   
 
 \begin{comment}
@@ -79,9 +51,9 @@ changes and sending view updates to all the participants.
 Furthermore, it is also able to detect silent crashes and initiate view
 changes to notify the other members that the group has changed.\\
 The exchange of messages is governed by the \texttt{Virtual Synchrony}
-protocol, which ensures first that the communication between actors is
-consistent and secondly that the system is fault tolerant in case of
-silent crash of one or more actors taking part in the group.
+protocol, which ensures on one hand that the communication between actors is
+consistent and on the other one that the system is fault tolerant 
+in case of silent crash of one or more actors taking part in the group.
 
 
 \begin{comment}
@@ -120,10 +92,10 @@ The code is structured in two java classes:
 \end{itemize}
 Every message being exchanged in the communication has a specific
 structure according to the needed information to spread around. 
-All the message types are implemented by \texttt{public static classes}
+All the message types are \texttt{public static classes}
 implementing the \texttt{Serializable} interface.\\
-To maintain information about the view and all the actors taking part
-in that specific view, we have defined a data structure called \texttt{Groups}.
+To maintain information about the view and all the actors belonging
+to that specific view, we have defined a data structure called \texttt{Groups}.
 Every Groups instance is composed by the view ID, IDs and the list of the
 actors partecipating to that view. \\
 In order to better understand the functioning of the system, the 
@@ -136,21 +108,21 @@ following flow graphs contribute to give the general idea. \\
 	\label{fig:join}%
 \end{figure}
 Figure \ref{fig:join} shows whenever a partecipant wants to join a 
-group. First, it contacts the manager. The latter elaborates the
+group. First, it contacts the manager. Then, the latter elaborates the
 request and, eventually, it adds the new peer to the group by sending
-him a new JoinGroupMsg containing the unique ID of the new member. \\
+him a new \texttt{JoinGroupMsg} containing the unique ID of the new member. \\
 The Figure \ref{fig:NewView} shows the flow of execution to instantiate a new view.
 Whenever a new join request or a silent crash occurs, the manager
-receives respectively either a RequestJoinMsg or a TimeoutMsg.
+receives respectively either a \texttt{RequestJoinMsg} or a \texttt{TimeoutMsg}.
 Afterwords, it instantiates the view change process and,
 eventually, all the operational peers receives the message and execute
 the flush protocol. This protocol is needed to make all the participants
 aware that they have received all unstable messages from all the 
-members in the group: every operational peer first sends all the 
+members in the group: first, every operational peer sends all the 
 unstable messages it owns in the queue to make them stable and second, 
 multicasts a \texttt{FlushMsg} object indicating that they have 
 completed the flush protocol. 
-Only after having received the flush message from all the peers, a 
+Only after having received the flush message from all the operational peers, a 
 group member is allowed to install the new view. \\
 \begin{figure}[ht]%
 	\centering
@@ -170,16 +142,23 @@ The implementation takes place through a simple beacon mechanism:
 every five seconds each peer has to send a message (beacon) to the 
 manager, indicating that specific peer is still alive. 
 Since the channel is reliable, as soon as the manager does not receive 
-even a single beacon from a participant, the group manager receives a
+a beacon from a participant, the group manager receives a
 \texttt{TimeoutMsg} indicating that a silent crash occured. 
 In particular, he is able to understand which peer crashed, thanks to 
-a dedicated HashMap where the pair key-value
-is represented by the peer and a \texttt{Cancellable} object. The
-latter object is used to update the time in which that specific 
-peer sent the beacon.
-Afterwords, the manager instantiates a new view without the crashed node.\\
+a dedicated HashMap where the key-value pair
+is represented by the peer and a \texttt{Cancellable} object.
+This data structure is used to have information about the time a peer
+sent the beacon. By associating to each participant the precise time in which
+its onw beacon was sent, the group manager is able to keep track about the alive peers.
+As far as the manager keeps on receiving beacons and updating the time of each peer, 
+everything continues working properly. As soon as a beacon is missing, the manager
+receives a \texttt{TimeoutMsg} and he is able to identify the crashed member.
+Afterwords, a new view without the crashed node is instantiated.\\
+Furthermore, the overall application tries to take into account possible 
+delays over the channels: every message is propagated with an extremely small and 
+random delay in order to obtain a more realistic scenario. 
 Moreover, there are some supporting functions used to simplify the overall
-application. 
+application: e.g., \textit{DeleteOldMessages}, \textit{FindDuplicate}, etc.
 
 
 
@@ -195,7 +174,7 @@ application.
 \section{Conclusion}
 This project suggests a simple implementation of a distributed application
 according to the protocol. Everything works properly ad the overall system
-is very easily tesatble. 
+is very easily tesatble thanks to the \textbf{CausalMulticast.java} class. 
 
 \begin{comment}
 	\begin{itemize}
@@ -209,72 +188,5 @@ Again for very short documents the conclusions can be embedded with the last sec
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
-
-\section{Appendix: \LaTeX\xspace Tips}
-
-\subsection{Cross References}
-\label{sec:cross-ref}
-
-\begin{comment}
-	Cross references are an easy way to point a reader to certain parts of the text.
-For figures, tables, and equations, they are a must.
-Use the \verb|\cref| command to make references to a label.
-For example, if you use \verb|\label{eq:newton-second}| to label the following formula
-\begin{equation}
-	\vec{F} = m\vec{a}\label{eq:newton-second}
-\end{equation}
-you can than refer to that in the text using \verb|\cref{eq:newton-second}|.
-Example: The formula in \cref{eq:newton-second} is known as Newton's second law of motion.
-
-\end{comment}
-
-
-%\section{Algorithms}
-%
-%Use algorithms to explain what would be too hard to express in the text body of your thesis.
-%
-%For example: Based on the periodically transmitted \texttt{hello} messages, the joining node gets information about its physical neighbors and their adjacent nodes.
-%\Cref{alg:H_hello} depicts the handling of \texttt{hello} messages.
-%
-%\begin{algorithm}
-%\begin{algorithmic}[1]
-%\REQUIRE Locally stored state of all neighbors in set $N$
-%\ENSURE Maintain neighbor set $N$ and set virtual address
-%\STATE Receive neighbor information from node $N_i$
-%\IF {$N_i \notin N$}
-%	\STATE $N \gets N_i$
-%\ELSE
-%	\STATE Update $N_i \in N$
-%\ENDIF
-%\IF {$P==-1$ AND (Time() $-$ OldTime) $> T_{ps}$}
-%	\STATE OldTime $\gets$ Time()
-%	\STATE SetMyPosition()
-%\ENDIF
-%\end{algorithmic}
-%\caption{Handle \texttt{hello} messages}
-%\label{alg:H_hello}
-%\end{algorithm}
-
-
-%\section{Program Code}
-%
-%Program code should be omitted.
-%What your programs do will already be explained in text form or, if needed, in algorithmic form.
-%If including source code is absolutely necessary, it should be typeset as seen in \cref{lst:code}.
-%
-%\begin{lstlisting}[style=txt,caption=Sample application,label=lst:code]{}
-%APPLICATION("printU", 192, arg)
-%{
-%    // Set Priority
-%    NutThreadSetPriority(16);
-%    // main() loop
-%    for (;;) {
-%        putchar('U');
-%        NutSleep(125);
-%    }
-%}
-%\end{lstlisting}
-
-\subsection{References}
 
 \end{document}
